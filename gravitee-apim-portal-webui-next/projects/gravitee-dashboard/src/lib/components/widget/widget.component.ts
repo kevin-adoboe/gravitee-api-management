@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, input } from '@angular/core';
-
-import { Widget } from './widget';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'gd-widget-title',
@@ -37,6 +35,4 @@ export class WidgetBodyComponent {}
   templateUrl: './widget.component.html',
   styleUrl: './widget.component.scss',
 })
-export class WidgetComponent {
-  item = input<Widget>();
-}
+export class WidgetComponent {}
