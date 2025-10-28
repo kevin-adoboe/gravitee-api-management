@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 import { Component, DestroyRef, inject, input, InputSignal, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule
-} from "@angular/forms";
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EMPTY, merge } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -47,14 +42,12 @@ const BOOLEAN_CONFIG_KEYS = [
   'headers',
   'payload',
   'tracingEnabled',
-  'tracingVerbose'
+  'tracingVerbose',
 ] as const;
 
 type BooleanConfig = (typeof BOOLEAN_CONFIG_KEYS)[number];
 
-const STRING_CONFIG_KEYS = [
-  'condition'
-] as const;
+const STRING_CONFIG_KEYS = ['condition', 'overrideContentTypeValidation'] as const;
 type StringConfig = (typeof STRING_CONFIG_KEYS)[number];
 
 type DefaultConfiguration = Record<BooleanConfig, boolean> & Record<StringConfig, string>;
@@ -109,6 +102,7 @@ export class ReporterSettingsProxyComponent implements OnInit {
               ...api.analytics,
               enabled: configurationValues.enabled,
               logging: {
+                overrideContentTypeValidation: configurationValues.overrideContentTypeValidation,
                 condition: configurationValues.condition,
                 mode: {
                   entrypoint: configurationValues.entrypoint,
@@ -183,6 +177,10 @@ export class ReporterSettingsProxyComponent implements OnInit {
       }),
       condition: new FormControl({
         value: api.analytics?.logging?.condition,
+        disabled: !analyticsEnabled || !atLeastModeIsEnabled || isReadOnly,
+      }),
+      overrideContentTypeValidation: new FormControl({
+        value: api.analytics?.logging?.overrideContentTypeValidation,
         disabled: !analyticsEnabled || !atLeastModeIsEnabled || isReadOnly,
       }),
     });
@@ -260,7 +258,7 @@ export class ReporterSettingsProxyComponent implements OnInit {
   }
 
   private clearAndDisableLoggingFormFields() {
-    BOOLEAN_CONFIG_KEYS.forEach((key) => {
+    ['request', 'response', 'headers', 'payload'].forEach((key) => {
       this.form.get(key).setValue(false);
       this.form.get(key).disable();
     });
