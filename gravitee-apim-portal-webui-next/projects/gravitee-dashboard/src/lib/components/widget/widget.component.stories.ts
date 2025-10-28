@@ -16,8 +16,8 @@
 import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
-import { WidgetComponent, WidgetTitleComponent, WidgetBodyComponent } from './widget.component';
 import { Widget } from './widget';
+import { WidgetComponent, WidgetTitleComponent, WidgetBodyComponent } from './widget.component';
 import { PieChartComponent } from '../chart/pie-chart/pie-chart.component';
 
 interface WidgetStoryArgs {
