@@ -14,27 +14,13 @@
  * limitations under the License.
  */
 import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { GridsterConfig, GridType, CompactType, DisplayGrid } from 'angular-gridster2';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { GridComponent } from './grid.component';
 import { Widget } from '../widget/widget';
 
 interface GridStoryArgs {
-  storyId?: string;
   items: Widget[];
-  maxCols: number;
-  minCols: number;
-  minRows: number;
-  itemAspectRatio: number;
-  compactType: string;
-  displayGrid: string;
-  pushItems: boolean;
-  draggableEnabled: boolean;
-  resizableEnabled: boolean;
-  outerMargin: boolean;
-  fixedColWidth: number;
-  fixedRowHeight: number;
 }
 
 // Common widget items to avoid duplication
@@ -100,153 +86,22 @@ export default {
     },
   },
   argTypes: {
-    storyId: {
-      table: { disable: true },
-    },
     items: {
       description: 'Array of widgets to display in the grid',
     },
-    maxCols: {
-      control: { type: 'number', min: 1, max: 12 },
-      description: 'Maximum number of columns',
-      defaultValue: 6,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    minCols: {
-      control: { type: 'number', min: 1, max: 12 },
-      description: 'Minimum number of columns',
-      defaultValue: 6,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    minRows: {
-      control: { type: 'number', min: 1, max: 20 },
-      description: 'Minimum number of rows',
-      defaultValue: 8,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    itemAspectRatio: {
-      control: { type: 'number', min: 0.1, max: 5, step: 0.1 },
-      description: 'Aspect ratio of grid items',
-      defaultValue: 4 / 3,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    compactType: {
-      control: { type: 'select' },
-      options: ['none', 'compactUp', 'compactLeft', 'compactUp&Left', 'compactUp&Right', 'compactLeft&Up', 'compactRight&Up'],
-      description: 'How to compact the grid',
-      defaultValue: 'none',
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    displayGrid: {
-      control: { type: 'select' },
-      options: ['none', 'always', 'onDrag&Resize'],
-      description: 'When to display the grid lines',
-      defaultValue: 'none',
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    draggableEnabled: {
-      control: { type: 'boolean' },
-      description: 'Whether items can be dragged',
-      defaultValue: true,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    pushItems: {
-      control: { type: 'boolean' },
-      description: 'Whether to push items when dragging',
-      defaultValue: true,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    resizableEnabled: {
-      control: { type: 'boolean' },
-      description: 'Whether items can be resized',
-      defaultValue: true,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    outerMargin: {
-      control: { type: 'boolean' },
-      description: 'Whether to add outer margin',
-      defaultValue: true,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    fixedColWidth: {
-      control: { type: 'number', min: 10, max: 200 },
-      description: 'Fixed column width in pixels',
-      defaultValue: 50,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
-    fixedRowHeight: {
-      control: { type: 'number', min: 50, max: 500 },
-      description: 'Fixed row height in pixels',
-      defaultValue: 150,
-      if: { arg: 'storyId', eq: 'gridOptions' },
-    },
   },
-  render: (args: Record<string, unknown>) => ({
+  render: args => ({
     template: `
           <gd-grid [items]="items" />
     `,
     props: {
-      items: (args as unknown as GridStoryArgs).items,
+      items: args.items,
     },
   }),
-} as Meta<GridComponent>;
+} as Meta<GridStoryArgs>;
 
-export const Default: StoryObj<GridComponent> = {
+export const Default: StoryObj<GridStoryArgs> = {
   args: {
     items: commonItems,
-  },
-};
-
-export const GridOptions: StoryObj<GridComponent> = {
-  args: {
-    storyId: 'gridOptions',
-    items: commonItems,
-    maxCols: 8,
-    minCols: 4,
-    minRows: 6,
-    itemAspectRatio: 1.5,
-    compactType: 'compactUp',
-    displayGrid: 'always',
-    draggableEnabled: true,
-    pushItems: false,
-    resizableEnabled: true,
-    outerMargin: true,
-    fixedColWidth: 80,
-    fixedRowHeight: 120,
-  } as GridStoryArgs,
-  render: (args: Record<string, unknown>) => {
-    const typedArgs = args as unknown as GridStoryArgs;
-    const options: GridsterConfig = {
-      gridType: GridType.VerticalFixed,
-      maxCols: typedArgs.maxCols,
-      minCols: typedArgs.minCols,
-      minRows: typedArgs.minRows,
-      itemAspectRatio: typedArgs.itemAspectRatio,
-      compactType: typedArgs.compactType as CompactType,
-      displayGrid: typedArgs.displayGrid as DisplayGrid,
-      pushItems: typedArgs.pushItems,
-      draggable: {
-        enabled: typedArgs.draggableEnabled,
-      },
-      resizable: {
-        enabled: typedArgs.resizableEnabled,
-      },
-      outerMargin: typedArgs.outerMargin,
-      setGridSize: false, // Désactiver le redimensionnement automatique
-      fixedColWidth: typedArgs.fixedColWidth,
-      fixedRowHeight: typedArgs.fixedRowHeight,
-    };
-
-    return {
-      template: `
-          <div style="height: 100vh; ">
-            <gd-grid [items]="items" [options]="options" />
-          </div>
-      `,
-      props: {
-        items: typedArgs.items,
-        options: options,
-      },
-    };
   },
 };
